@@ -36,7 +36,7 @@ export function isKana(char) {
 }
 
 
-export function parseToKana(text, cursorPosition) {
+export function parseToKana(text, cursorPosition = 0) {
     let newCursorPosition = cursorPosition;
     const MAX_CHAR = 3;
     let output = text+"";
