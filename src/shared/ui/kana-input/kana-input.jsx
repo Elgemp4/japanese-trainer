@@ -1,26 +1,28 @@
-import {useLayoutEffect, useMemo, useRef, useState} from "react";
-import {isKana, kanaMap, parseToKana} from "./kana.js";
+import {useLayoutEffect,  useRef, useState} from "react";
+import {parseToKana} from "./kana.js";
 
-const KanaInput = ({onChanged}) => {
+const KanaInput = () => {
     const [inputed, setInputed] = useState("");
-    const [selectLocation, setSelectLocation] = useState(null);
     /**
      *
      * @type {React.RefObject<HTMLInputElement>}
      */
     const inputRef = useRef(null);
+    const selectRef = useRef(null);
 
     useLayoutEffect(() => {
-        if(selectLocation){
-            inputRef.current.setSelectionRange(selectLocation, selectLocation)
-            setSelectLocation(null);
+        const location = selectRef.current;
+
+        if(location){
+            inputRef.current.setSelectionRange(location, location)
+            selectRef.current = null;
         }
     });
 
     const changeInput = (e) => {
         const {output, newCursorPosition} = parseToKana(e.target.value, e.target.selectionStart);
         setInputed(output)
-        setSelectLocation(newCursorPosition);
+        selectRef.current = newCursorPosition
     }
 
     return (
