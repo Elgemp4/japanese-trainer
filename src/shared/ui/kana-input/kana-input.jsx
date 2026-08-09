@@ -2,7 +2,7 @@ import {useLayoutEffect,  useRef, useState} from "react";
 import {parseToKana} from "./kana.js";
 
 const KanaInput = () => {
-    const [inputed, setInputed] = useState("");
+    const [inputted, setInputted] = useState("");
     /**
      *
      * @type {React.RefObject<HTMLInputElement>}
@@ -21,12 +21,12 @@ const KanaInput = () => {
 
     const changeInput = (e) => {
         const {output, newCursorPosition} = parseToKana(e.target.value, e.target.selectionStart);
-        setInputed(output)
+        setInputted(output)
         selectRef.current = newCursorPosition
     }
 
     return (
-        <input ref={inputRef} type="text" value={inputed} onChange={changeInput}/>
+        <input ref={inputRef} type="text" value={inputted} onChange={changeInput}/>
     );
 };
 
