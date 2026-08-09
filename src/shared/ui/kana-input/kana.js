@@ -1,4 +1,23 @@
-export const kanaMap = {
+const extendedKatakana = {
+    // F
+    FA: "ファ", FI: "フィ", FE: "フェ", FO: "フォ", FYU: "フュ",
+    // V
+    VA: "ヴァ", VI: "ヴィ", VU: "ヴ", VE: "ヴェ", VO: "ヴォ",
+    // TS
+    TSA: "ツァ", TSI: "ツィ", TSE: "ツェ", TSO: "ツォ",
+    // CH / SH / J + e
+    CHE: "チェ", SHE: "シェ", JE: "ジェ",
+    // T + petite voyelle
+    TI: "ティ", TU: "トゥ", TYU: "テュ",
+    // W
+    WI: "ウィ", WE: "ウェ",
+    // glides + e (rares)
+    KYE: "キェ", GYE: "ギェ", NYE: "ニェ", HYE: "ヒェ",
+    BYE: "ビェ", PYE: "ピェ", MYE: "ミェ", RYE: "リェ",
+    "-": "ー"
+};
+
+const hiraganaMap = {
     a: "あ", i: "い", u: "う", e: "え", o: "お",
     ka: "か", ki: "き", ku: "く", ke: "け", ko: "こ",
     sa: "さ", shi: "し", su: "す", se: "せ", so: "そ",
@@ -35,6 +54,30 @@ export function isKana(char) {
     );
 }
 
+function isUpperCase(text) {
+    return text === text.toUpperCase();
+}
+
+function hiraganaToKatakana(hiraganas){
+    let katakana = "";
+    for(const char of hiraganas) {
+        katakana += String.fromCharCode(char.codePointAt(0) + 0x60)
+    }
+
+    return katakana;
+}
+
+function mapToKana(word){
+    let extKatakana = extendedKatakana[word];
+    if(extKatakana){
+        return extKatakana;
+    }
+
+    let kana = hiraganaMap[word.toLowerCase()];
+    if(!kana) return null;
+
+    return isUpperCase(word) ? hiraganaToKatakana(kana) : kana
+}
 
 export function parseToKana(text, cursorPosition = 0) {
     let newCursorPosition = cursorPosition;
@@ -61,7 +104,7 @@ export function parseToKana(text, cursorPosition = 0) {
             shouldIncrementBase = true;
         }
         // Check if the current word is romajed kana
-        else if((kanaTranslation = kanaMap[currentWord])){
+        else if((kanaTranslation = mapToKana(currentWord))){
             const before = output.slice(0, basePointer);
             const after = output.slice(endPointer);
             output = before + kanaTranslation + after;
@@ -72,7 +115,8 @@ export function parseToKana(text, cursorPosition = 0) {
         else if (length >= 2 && currentWord.charAt(0) === currentWord.charAt(1)){
             const before = output.slice(0, basePointer);
             const after = output.slice(endPointer);
-            output = before + "っ" + currentWord.charAt(0) + after;
+            const smallTsu = isUpperCase(currentWord.charAt(0)) ? "ッ" : "っ";
+            output = before + smallTsu + currentWord.charAt(0) + after;
             shouldIncrementBase = true;
         }
         //If no match move the endPointer

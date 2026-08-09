@@ -41,12 +41,17 @@ describe("Testing isKana correctness", () => {
 })
 
 
-describe("Testing parseToKana", () => {
+describe("Testing parseToKana with hiraganas", () => {
     test("Test basic vowels and ん", () => {
         expect(parseToKana("a").output).toBe("あ")
         expect(parseToKana("aiueo").output).toBe("あいうえお")
+
+        expect(parseToKana("A").output).toBe("ア")
+        expect(parseToKana("AIUEO").output).toBe("アイウエオ")
         expect(parseToKana("n").output).toBe("n")
         expect(parseToKana("nn").output).toBe("ん")
+        expect(parseToKana("N").output).toBe("N")
+        expect(parseToKana("NN").output).toBe("ン")
     })
     test("Test vowels + consonants", () => {
         expect(parseToKana("ka").output).toBe("か")
@@ -78,4 +83,32 @@ describe("Testing parseToKana", () => {
         expect(parseToKana("aぶく", 1).newCursorPosition).toBe(1);
         expect(parseToKana("あくkyuか", 5).newCursorPosition).toBe(4);
     })
+})
+
+describe("Testing parseToKana with katakanas", () => {
+    test("Test basic vowels and ん", () => {
+        expect(parseToKana("A").output).toBe("ア")
+        expect(parseToKana("AIUEO").output).toBe("アイウエオ")
+        expect(parseToKana("N").output).toBe("N")
+        expect(parseToKana("NN").output).toBe("ン")
+    })
+    test("Test vowels + consonants", () => {
+        expect(parseToKana("KA").output).toBe("カ")
+        expect(parseToKana("NA").output).toBe("ナ")
+        expect(parseToKana("CHA").output).toBe("チャ")
+        expect(parseToKana("KYA").output).toBe("キャ")
+        expect(parseToKana("TSU").output).toBe("ツ")
+        expect(parseToKana("SHI").output).toBe("シ")
+        expect(parseToKana("DU").output).toBe("ヅ")
+        expect(parseToKana("KANACHAKYATSUSHIDU").output).toBe("カナチャキャツシヅ")
+    })
+    test("Test double consonant", () => {
+        expect(parseToKana("CCHA").output).toBe("ッチャ");
+        expect(parseToKana("KA-FE").output).toBe("カーフェ");
+        expect(parseToKana("GEKKOU").output).toBe("ゲッコウ");
+    });
+    test("Test with characters in the middle", () => {
+        expect(parseToKana("AKKKKKKKKA").output).toBe("アッッッッッッッカ");
+        expect(parseToKana("AHJKLMKA").output).toBe("アHJKLMカ");
+    });
 })
