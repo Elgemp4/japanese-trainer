@@ -1,3 +1,5 @@
+import {makeLog} from "../logging/log.js";
+
 const extendedKatakana = {
     // F
     FA: "ファ", FI: "フィ", FE: "フェ", FO: "フォ", FYU: "フュ",
@@ -54,6 +56,8 @@ export function isKana(char) {
     );
 }
 
+const log = makeLog("kana");
+
 function isUpperCase(text) {
     return text === text.toUpperCase();
 }
@@ -89,7 +93,11 @@ export function parseToKana(text, cursorPosition = 0) {
 
     let shouldIncrementBase;
 
+    log("Start cursor position : ", cursorPosition);
+    log("End cursor position : ", newCursorPosition);
+
     while(basePointer < output.length){
+        log("pointers", basePointer, endPointer)
         let kanaTranslation;
         const currentWord = output.slice(basePointer, endPointer);
         const length = endPointer-basePointer;
@@ -97,42 +105,50 @@ export function parseToKana(text, cursorPosition = 0) {
 
         //Check if the span is not greater than 3 letters and that we don't overflow
         if(length > MAX_CHAR || endPointer > output.length){
+            log("Window span exceeded max length, incrementing base pointer");
             shouldIncrementBase = true;
         }
-        // Check if the current character is already a kana (only if it's one caracter wide)
+        // Check if the current character is already a kana (only if it's one character wide)
+        // Happens if the user uses a IME or a japanese keyboard
+        // Micro optimization by fast forwarding those characters and avoiding the sliding window algorithm
         else if(length === 1 && isKana(currentWord)){
+            log("Already a kana, skip ahead");
             shouldIncrementBase = true;
         }
-        // Check if the current word is romajed kana
+        // Check if the current word is romaji convertible to kana
         else if((kanaTranslation = mapToKana(currentWord))){
+            log("Converting romaji to kana")
             const before = output.slice(0, basePointer);
             const after = output.slice(endPointer);
             output = before + kanaTranslation + after;
             shouldIncrementBase = true;
-
         }
         //Check for double consonant
         else if (length >= 2 && currentWord.charAt(0) === currentWord.charAt(1)){
+            log("Replacing double consonant by small tsu")
             const before = output.slice(0, basePointer);
             const after = output.slice(endPointer);
             const smallTsu = isUpperCase(currentWord.charAt(0)) ? "ッ" : "っ";
             output = before + smallTsu + currentWord.charAt(0) + after;
-            shouldIncrementBase = true;
         }
         //If no match move the endPointer
         else{
+            log("No match advancing endPointer")
             endPointer++;
         }
 
         if(shouldIncrementBase){
             basePointer += kanaTranslation?.length ?? 1;
-            if(endPointer === newCursorPosition){
+            if(kanaTranslation && endPointer === newCursorPosition){
+                log("Setting new cursor position")
                 newCursorPosition = basePointer
             }
             endPointer = basePointer + 1;
         }
     }
 
+    log("Start cursor position : ", cursorPosition);
+    log("End cursor position : ", newCursorPosition);
     return {
         output, newCursorPosition
     };

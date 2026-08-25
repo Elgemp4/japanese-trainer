@@ -82,6 +82,9 @@ describe("Testing parseToKana with hiraganas", () => {
         expect(parseToKana("あbuく", 3).newCursorPosition).toBe(2);
         expect(parseToKana("aぶく", 1).newCursorPosition).toBe(1);
         expect(parseToKana("あくkyuか", 5).newCursorPosition).toBe(4);
+        expect(parseToKana("あくkyuか", 5).newCursorPosition).toBe(4);
+        expect(parseToKana("めcc", 3).newCursorPosition).toBe(3);
+        expect(parseToKana("zsnn", 4).newCursorPosition).toBe(3);
     })
 })
 

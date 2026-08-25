@@ -1,7 +1,7 @@
 import {useLayoutEffect,  useRef, useState} from "react";
 import {parseToKana} from "./kana.js";
 
-const KanaInput = () => {
+const KanaInput = ({...props}) => {
     const [inputted, setInputted] = useState("");
     /**
      *
@@ -26,7 +26,7 @@ const KanaInput = () => {
     }
 
     return (
-        <input ref={inputRef} type="text" value={inputted} onChange={changeInput}/>
+        <input {...props} ref={inputRef} type="text" value={inputted} onChange={changeInput}/>
     );
 };
 
