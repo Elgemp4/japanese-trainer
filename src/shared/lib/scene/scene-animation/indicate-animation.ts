@@ -12,7 +12,7 @@ export class IndicateAnimation extends AbstractSceneAnimation {
     protected color:string;
 
     constructor(el : SceneElement, {color = "var(--color-primary)", ...options} : IndicateOptions = {}) {
-        super(el, {...options});
+        super(el, {duration: 700, ...options});
         this.color = color;
     }
     protected keyframes(): Frame[] {
@@ -25,7 +25,7 @@ export class IndicateAnimation extends AbstractSceneAnimation {
     }
 
     protected reducedKeyframes(): Frame[] {
-        return [];
+        return [{fill: this.color, stroke: this.color}];
     }
 
 }

@@ -28,17 +28,16 @@ export abstract class AbstractSceneAnimation {
      * Animate an element and keep its final state.
      * When animations are unavailable (instant mode, reduced motion, jsdom) the final frame is applied directly
      * @param scene
-     * @param options
      */
-    animate(scene: Scene, options: KeyframeAnimationOptions = {}): Animation | null {
+    animate(scene: Scene): Animation | null {
         const keyframes = this.prefersReducedMotion() ? this.reducedKeyframes() : this.keyframes();
         const lastFrame = keyframes[keyframes.length - 1];
-        if (scene.instant || typeof this.el.animate !== "function") {
+        if (scene.instant) {
             this.el.applyFrame(lastFrame);
             return null;
         }
 
-        const animation = this.el.animate(keyframes, {fill: "forwards", easing: "ease-in-out", ...options});
+        const animation = this.el.animate(keyframes, {fill: "forwards", easing: this.easing, duration: this.duration});
         if(animation === null){
             this.el.applyFrame(lastFrame);
             return null;

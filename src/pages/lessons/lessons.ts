@@ -43,6 +43,7 @@ const makeRowLesson = ({id, title, kana}: {id: string, title: string, kana: Kana
             const subtitle = scene.text(`${count} new kana`, {y: 290, size: 28, color: "var(--color-muted)"});
             await scene.play(new WriteAnimation(heading));
             await scene.play(new FadeinAnimation(subtitle, {shift: [0, 20]}));
+            await scene.play(new FadeOutAnimation(heading), new FadeOutAnimation(subtitle));
         },
     };
 

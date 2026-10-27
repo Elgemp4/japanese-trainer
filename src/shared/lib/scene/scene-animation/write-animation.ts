@@ -1,9 +1,14 @@
-import {AbstractSceneAnimation, type Frame} from "./abstract-scene-animation.ts";
+import {AbstractSceneAnimation, type AnimationOptions, type Frame} from "./abstract-scene-animation.ts";
+import type {SceneElement} from "../scene-element.ts";
 
 /**
  * Draw the outline of an element, then fill it (manim's Write)
  */
 export class WriteAnimation extends AbstractSceneAnimation{
+    constructor(el : SceneElement, options : AnimationOptions = {}) {
+        super(el, {duration: 1400, ...options});
+    }
+
     protected keyframes(): Frame[] {
         const length = `${this.el.length}px`;
         return[

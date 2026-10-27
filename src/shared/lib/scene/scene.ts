@@ -2,15 +2,14 @@
  * A tiny manim-like animation engine running on SVG + the Web Animations API.
  *
  * Usage:
- *   const scene = createScene(svgElement);
+ *   const scene = new Scene(svgElement);
  *   const title = scene.text("あ", {size: 160});
- *   await scene.play(write(title));
- *   await scene.play(moveTo(title, {y: 70, scale: 0.4}), fadeIn(other));
+ *   await scene.play(new WriteAnimation(title));
+ *   await scene.play(new MovetoAnimation(title, {y: 70, scale: 0.4}), new FadeinAnimation(other));
  */
-import {SceneElement} from "./scene-element.ts";
+import {SceneElement, SVG_NS} from "./scene-element.ts";
 import type {AbstractSceneAnimation} from "./scene-animation/abstract-scene-animation.ts";
 
-const SVG_NS = "http://www.w3.org/2000/svg";
 
 
 
@@ -65,23 +64,19 @@ export class Scene{
      */
     text(content: string, {x = WIDTH / 2, y = HEIGHT / 2, size = 48, color = "var(--color-heading)", name} : TextOptions = {}) {
         this.guard();
+        // Centered on (0, 0), the group around it holds the position
         const el = document.createElementNS(SVG_NS, "text");
         el.textContent = content;
-        el.setAttribute("x", String(x));
-        el.setAttribute("y", String(y));
         el.setAttribute("text-anchor", "middle");
         el.setAttribute("dominant-baseline", "central");
         el.setAttribute("font-size", String(size));
-        Object.assign(el.style, {
+
+        const sceneElement = new SceneElement(el, {x, y});
+        sceneElement.setStyle({
             fill: color,
             stroke: color,
             strokeWidth: String(Math.max(1, size / 80)),
-            opacity: "0",
-            transformBox: "fill-box",
-            transformOrigin: "center",
         });
-
-        const sceneElement = new SceneElement(el);
         sceneElement.length = size * 12;
 
         if (name) {
@@ -89,7 +84,7 @@ export class Scene{
             this.objects.set(name, sceneElement);
         }
 
-        this.svg.append(el);
+        sceneElement.mount(this.svg);
         return sceneElement;
     }
 

@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from "react";
-import {createScene, HEIGHT, type Scene, SceneAbortedError, WIDTH} from "./scene.ts";
+import {HEIGHT, Scene, SceneAbortedError, WIDTH} from "./scene.ts";
 import KanaInput from "../../ui/kana-input/kana-input.tsx";
 
 export type Step = {
@@ -52,7 +52,7 @@ const ScenePlayer = ({steps, onComplete}: ScenePlayerProps) => {
 
     useEffect(() => {
         if (!svgRef.current) return;
-        const scene = createScene(svgRef.current);
+        const scene = new Scene(svgRef.current);
         sceneRef.current = scene;
 
         (async () => {

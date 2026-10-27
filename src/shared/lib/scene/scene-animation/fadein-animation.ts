@@ -9,7 +9,7 @@ export type FadeInOptions = AnimationOptions & {
  * Fade an element in, optionally sliding it from an offset
  */
 export class FadeinAnimation extends AbstractSceneAnimation {
-    protected shift: number[];
+    protected shift: [number, number];
 
     constructor(el : SceneElement, {shift = [0,0], ...options} : FadeInOptions = {}) {
         super(el, {...options});
@@ -19,7 +19,7 @@ export class FadeinAnimation extends AbstractSceneAnimation {
 
     protected keyframes(): Frame[] {
         const [dx, dy] = this.shift;
-        const {x, y} = this.el.offset;
+        const {x, y} = this.el.position;
         return [
             {opacity: 0, translate: `${x + dx}px ${y + dy}px`},
             {opacity: 1, translate: `${x}px ${y}px`},
@@ -27,12 +27,7 @@ export class FadeinAnimation extends AbstractSceneAnimation {
     }
 
     protected reducedKeyframes(): Frame[] {
-        const [dx, dy] = this.shift;
-        const {x, y} = this.el.offset;
-        return [
-            {opacity: 0, translate: `${x + dx}px ${y + dy}px`},
-            {opacity: 1, translate: `${x}px ${y}px`},
-        ];
+        return [{opacity: 0}, {opacity: 1}];
     }
 
 }

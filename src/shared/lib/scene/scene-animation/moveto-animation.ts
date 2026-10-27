@@ -8,25 +8,25 @@ export type MoveToOptions = AnimationOptions & {
 }
 
 /**
- * Move (and optionally scale) an element so its anchor sits at x, y
+ * Move (and optionally scale) an element so its center sits at x, y
  */
 export class MovetoAnimation extends AbstractSceneAnimation {
     protected x : number|undefined;
     protected y : number|undefined;
     protected scale : number|undefined;
     constructor(el : SceneElement, {x,y,scale,...options} : MoveToOptions = {}) {
-        super(el, {...options});
+        super(el, {duration: 800, ...options});
         this.x = x;
         this.y = y;
         this.scale = scale;
     }
 
     protected keyframes(): Frame[] {
-        const offset = this.el.offset;
-        const dx = this.x === undefined ? offset.x : this.x - Number(offset.x);
-        const dy = this.y === undefined ? offset.y : this.y - Number(offset.y);
+        const {position} = this.el;
+        const x = this.x ?? position.x;
+        const y = this.y ?? position.y;
 
-        const frame: Frame = {translate: `${dx}px ${dy}px`};
+        const frame: Frame = {translate: `${x}px ${y}px`};
         if (this.scale !== undefined) {
             frame.scale = this.scale;
         }
@@ -34,15 +34,7 @@ export class MovetoAnimation extends AbstractSceneAnimation {
     }
 
     protected reducedKeyframes(): Frame[] {
-        const offset = this.el.offset;
-        const dx = this.x === undefined ? offset.x : this.x - Number(offset.x);
-        const dy = this.y === undefined ? offset.y : this.y - Number(offset.y);
-
-        const frame: Frame = {translate: `${dx}px ${dy}px`};
-        if (this.scale !== undefined) {
-            frame.scale = this.scale;
-        }
-        return [frame];
+        return this.keyframes();
     }
 
 }
