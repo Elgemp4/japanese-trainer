@@ -1,4 +1,4 @@
-import KanaInput from "../../shared/ui/kana-input/kana-input.jsx";
+import KanaInput from "../../shared/ui/kana-input/kana-input.tsx";
 
 const TestPage = () => {
     return (

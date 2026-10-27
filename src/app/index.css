@@ -53,3 +53,14 @@ main{
 .main-input{
   grid-column: 5 / -5;
 }
+.lesson{
+  grid-column: 3 / -3;
+}
+
+.btn{
+  @apply px-4 py-2 rounded-md border border-border bg-surface text-text cursor-pointer hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+.btn-primary{
+  @apply bg-primary border-primary text-surface hover:bg-primary-dark;
+}

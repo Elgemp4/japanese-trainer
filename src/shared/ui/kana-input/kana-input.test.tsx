@@ -1,7 +1,7 @@
 import {test, expect, describe} from "vitest"
 import {render, screen} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import KanaInput from "./kana-input.jsx";
+import KanaInput from "./kana-input.tsx";
 
 describe("Testing kana input component", () => {
     test("Basic input test", async() => {

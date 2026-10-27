@@ -1,4 +1,4 @@
-import {isKana, parseToKana} from "./kana.js";
+import {isKana, parseToKana} from "./kana.ts";
 
 import {test, expect, describe} from "vitest"
 

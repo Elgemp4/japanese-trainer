@@ -1,6 +1,6 @@
-import {makeLog} from "../logging/log.js";
+import {makeLog} from "../logging/log.ts";
 
-const extendedKatakana = {
+const extendedKatakana: Record<string, string> = {
     // F
     FA: "ファ", FI: "フィ", FE: "フェ", FO: "フォ", FYU: "フュ",
     // V
@@ -19,7 +19,7 @@ const extendedKatakana = {
     "-": "ー"
 };
 
-const hiraganaMap = {
+const hiraganaMap: Record<string, string> = {
     a: "あ", i: "い", u: "う", e: "え", o: "お",
     ka: "か", ki: "き", ku: "く", ke: "け", ko: "こ",
     sa: "さ", shi: "し", su: "す", se: "せ", so: "そ",
@@ -48,8 +48,8 @@ const hiraganaMap = {
     pya: "ぴゃ", pyu: "ぴゅ", pyo: "ぴょ",
 }
 
-export function isKana(char) {
-    const code = char.codePointAt(0);
+export function isKana(char: string): boolean {
+    const code = char.codePointAt(0) ?? 0;
     return (
         (code >= 0x3040 && code <= 0x309f) || // hiragana
         (code >= 0x30a0 && code <= 0x30ff)    // katakana
@@ -58,47 +58,47 @@ export function isKana(char) {
 
 const log = makeLog("kana");
 
-function isUpperCase(text) {
+function isUpperCase(text: string): boolean {
     return text === text.toUpperCase();
 }
 
-function hiraganaToKatakana(hiraganas){
+function hiraganaToKatakana(hiraganas: string): string {
     let katakana = "";
     for(const char of hiraganas) {
-        katakana += String.fromCharCode(char.codePointAt(0) + 0x60)
+        katakana += String.fromCharCode((char.codePointAt(0) ?? 0) + 0x60)
     }
 
     return katakana;
 }
 
-function mapToKana(word){
-    let extKatakana = extendedKatakana[word];
+function mapToKana(word: string): string | null {
+    const extKatakana = extendedKatakana[word];
     if(extKatakana){
         return extKatakana;
     }
 
-    let kana = hiraganaMap[word.toLowerCase()];
+    const kana = hiraganaMap[word.toLowerCase()];
     if(!kana) return null;
 
     return isUpperCase(word) ? hiraganaToKatakana(kana) : kana
 }
 
-export function parseToKana(text, cursorPosition = 0) {
+export function parseToKana(text: string, cursorPosition = 0): {output: string, newCursorPosition: number} {
     let newCursorPosition = cursorPosition;
     const MAX_CHAR = 3;
-    let output = text+"";
+    let output = text;
 
     let basePointer = 0;
     let endPointer = 1;
 
-    let shouldIncrementBase;
+    let shouldIncrementBase: boolean;
 
     log("Start cursor position : ", cursorPosition);
     log("End cursor position : ", newCursorPosition);
 
     while(basePointer < output.length){
         log("pointers", basePointer, endPointer)
-        let kanaTranslation;
+        let kanaTranslation: string | null = null;
         const currentWord = output.slice(basePointer, endPointer);
         const length = endPointer-basePointer;
         shouldIncrementBase = false;
