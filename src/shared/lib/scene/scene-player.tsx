@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {createScene, HEIGHT, type Scene, SceneAbortedError, WIDTH} from "./scene.ts";
-import KanaInput from "../kana-input/kana-input.tsx";
+import KanaInput from "../../ui/kana-input/kana-input.tsx";
 
 export type Step = {
     caption: string,

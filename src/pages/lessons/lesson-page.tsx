@@ -1,5 +1,5 @@
 import {Link, useNavigate, useParams} from "react-router";
-import ScenePlayer from "../../shared/ui/scene/scene-player.tsx";
+import ScenePlayer from "../../shared/lib/scene/scene-player.tsx";
 import {findLesson} from "./lessons.ts";
 import {markCompleted} from "./progress.ts";
 

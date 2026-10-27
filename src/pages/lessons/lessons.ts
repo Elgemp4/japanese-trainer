@@ -1,5 +1,10 @@
-import {fadeIn, fadeOut, indicate, moveTo, WIDTH, write} from "../../shared/ui/scene/scene.ts";
-import type {Step} from "../../shared/ui/scene/scene-player.tsx";
+import type {Step} from "../../shared/lib/scene/scene-player.tsx";
+import {WIDTH} from "../../shared/lib/scene/scene.ts";
+import {WriteAnimation} from "../../shared/lib/scene/scene-animation/write-animation.ts";
+import {FadeinAnimation} from "../../shared/lib/scene/scene-animation/fadein-animation.ts";
+import {FadeOutAnimation} from "../../shared/lib/scene/scene-animation/fadeout-animation.ts";
+import {MovetoAnimation} from "../../shared/lib/scene/scene-animation/moveto-animation.ts";
+import {IndicateAnimation} from "../../shared/lib/scene/scene-animation/indicate-animation.ts";
 
 /**
  * A kana with its reading and an optional hint about its pronunciation
@@ -36,8 +41,8 @@ const makeRowLesson = ({id, title, kana}: {id: string, title: string, kana: Kana
         play: async (scene) => {
             const heading = scene.text(title, {size: 56});
             const subtitle = scene.text(`${count} new kana`, {y: 290, size: 28, color: "var(--color-muted)"});
-            await scene.play(write(heading));
-            await scene.play(fadeIn(subtitle, {shift: [0, 20]}));
+            await scene.play(new WriteAnimation(heading));
+            await scene.play(new FadeinAnimation(subtitle, {shift: [0, 20]}));
         },
     };
 
@@ -48,25 +53,25 @@ const makeRowLesson = ({id, title, kana}: {id: string, title: string, kana: Kana
                 // Collect the previous kana in the top row before writing the new one
                 if (i > 0) {
                     await scene.play(
-                        moveTo(scene.get(`kana-${i - 1}`), {x: slotX(i - 1, count), y: SLOT_Y, scale: 0.35}),
-                        fadeOut(scene.get("romaji")),
+                        new MovetoAnimation(scene.get(`kana-${i - 1}`), {x: slotX(i - 1, count), y: SLOT_Y, scale: 0.35}),
+                        new FadeOutAnimation(scene.get("romaji")),
                     );
                 }
                 const big = scene.text(character, {...CENTER, size: 180, name: `kana-${i}`});
                 const label = scene.text(romaji, {x: CENTER.x, y: 350, size: 44, color: "var(--color-secondary)", name: "romaji"});
-                await scene.play(write(big));
-                await scene.play(fadeIn(label, {shift: [0, 20]}));
+                await scene.play(new WriteAnimation(big));
+                await scene.play(new FadeinAnimation(label, {shift: [0, 20]}));
             },
         },
         {
             caption: "How is it read? Type it below.",
             play: async (scene) => {
-                await scene.play(fadeOut(scene.get("romaji")));
+                await scene.play(new FadeOutAnimation(scene.get("romaji")));
             },
             check: {
                 answer: character,
                 onSuccess: async (scene) => {
-                    await scene.play(fadeIn(scene.get("romaji")), indicate(scene.get(`kana-${i}`)));
+                    await scene.play(new FadeinAnimation(scene.get("romaji")), new IndicateAnimation(scene.get(`kana-${i}`)));
                 },
             },
         },
@@ -75,20 +80,20 @@ const makeRowLesson = ({id, title, kana}: {id: string, title: string, kana: Kana
     const recap: Step = {
         caption: `Now type the whole row: ${kana.map(([, r]) => r).join(" ")}`,
         play: async (scene) => {
-            await scene.play(fadeOut(scene.get("romaji")));
+            await scene.play(new FadeOutAnimation(scene.get("romaji")));
             await scene.play(...kana.map((_, i) =>
-                moveTo(scene.get(`kana-${i}`), {x: slotX(i, count), y: CENTER.y, scale: 0.6}),
+                new MovetoAnimation(scene.get(`kana-${i}`), {x: slotX(i, count), y: CENTER.y, scale: 0.6}),
             ));
             for (const [i, [, romaji]] of kana.entries()) {
                 const label = scene.text(romaji, {x: slotX(i, count), y: 290, size: 32, color: "var(--color-secondary)"});
-                await scene.play(fadeIn(label, {shift: [0, 15], duration: 300}));
+                await scene.play(new FadeinAnimation(label, {shift: [0, 15], duration: 300}));
             }
         },
         check: {
             answer: kana.map(([k]) => k).join(""),
             onSuccess: async (scene) => {
                 for (const i of kana.keys()) {
-                    await scene.play(indicate(scene.get(`kana-${i}`), {duration: 400}));
+                    await scene.play(new IndicateAnimation(scene.get(`kana-${i}`), {duration: 400}));
                 }
             },
         },
